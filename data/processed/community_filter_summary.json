@@ -1,0 +1,14 @@
+{
+  "raw_rows": 41154794,
+  "deduplicated_edges": 41154773,
+  "n_users_before_filter": 13781059,
+  "n_games_before_filter": 37610,
+  "n_users_after_filter": 6199837,
+  "n_games_after_filter": 37317,
+  "n_edges_after_filter": 32059257,
+  "removed_single_game_users": 7573027,
+  "removed_super_active_users": 8195,
+  "users_preserved_pct": 44.99,
+  "games_preserved_pct": 99.22,
+  "edges_preserved_pct": 77.9
+}
