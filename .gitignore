@@ -9,7 +9,6 @@ data/raw/
 
 # Artefatos grandes demais para versionamento Git convencional
 data/processed/user_game_edges.csv
-data/processed/user_game_edges_enhanced.csv
 graphs/user_game.graphml
 
 # Relatorios auxiliares e notas intermediarias

@@ -1,9 +1,12 @@
 {
-  "n_users": 6199837,
-  "n_games": 37317,
-  "n_edges": 32059257,
-  "avg_games_per_user": 5.171,
-  "avg_users_per_game": 859.106,
+  "n_users": 6106423,
+  "n_games": 23742,
+  "n_edges": 27874454,
+  "avg_games_per_user": 4.5648,
+  "avg_users_per_game": 1174.0567,
   "min_games_per_user": 2,
-  "max_games_per_user": 100
+  "max_games_per_user": 30,
+  "min_users_per_game": 10,
+  "max_users_per_game": 228201,
+  "projection_pairs_from_users": 103565422
 }

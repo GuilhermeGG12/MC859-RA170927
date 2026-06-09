@@ -1,0 +1,9 @@
+{
+  "n_catalog_games": 47940,
+  "n_community_games": 23742,
+  "n_common_games": 22708,
+  "n_catalog_only_games": 25232,
+  "n_community_only_games": 1034,
+  "catalog_overlap_pct": 47.37,
+  "community_overlap_pct": 95.64
+}

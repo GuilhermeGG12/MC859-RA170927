@@ -21,8 +21,7 @@ Projeto da disciplina MC859 para comparar duas estruturas de relação entre jog
 - bipartido: `graphs/game_tag.graphml`
 
 ### Comunidade
-- pipeline base: `src/clean_community.py`
-- pipeline enhanced: `src/build_enhanced_user_game_edges.py`
+- pipeline oficial: `src/clean_community.py`
 - filtro oficial da fase final:
   - `2 <= jogos_por_usuario <= 30`
   - `usuarios_por_jogo >= 10`
@@ -30,6 +29,7 @@ Projeto da disciplina MC859 para comparar duas estruturas de relação entre jog
 
 ## Scripts relevantes
 
+- `src/build_common_game_universe.py`
 - `src/build_bipartite_graphs.py`
 - `src/analyze_bipartite_graphs.py`
 - `src/plot_bipartite_degree_loglog.py`
@@ -38,7 +38,6 @@ Projeto da disciplina MC859 para comparar duas estruturas de relação entre jog
 
 - `notebooks/00_data_audit.ipynb`: auditoria inicial dos dados brutos
 - `notebooks/02_testes_limpeza.ipynb`: exploração da limpeza de tags
-- `notebooks/04_user_game_filter_sensitivity.ipynb`: análise de sensibilidade dos filtros da comunidade
 
 ## Observações
 

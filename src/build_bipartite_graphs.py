@@ -9,10 +9,10 @@ import networkx as nx
 
 
 DEFAULT_GAME_TAG_INPUT = Path("data/processed/game_tag_edges_filtered.csv")
-DEFAULT_USER_GAME_INPUT = Path("data/processed/user_game_edges_enhanced.csv")
+DEFAULT_USER_GAME_INPUT = Path("data/processed/user_game_edges.csv")
 DEFAULT_GAME_TAG_OUTPUT = Path("graphs/game_tag.graphml")
 DEFAULT_USER_GAME_OUTPUT = Path("graphs/user_game.graphml")
-DEFAULT_STATS_OUTPUT = Path("data/processed/bipartite_stats_enhanced.json")
+DEFAULT_STATS_OUTPUT = Path("data/processed/bipartite_stats.json")
 DEFAULT_MAX_USER_GRAPHML_SIZE_GB = 1.0
 
 USER_GAME_GRAPHML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
@@ -47,7 +47,7 @@ def parse_args() -> argparse.Namespace:
         "--user-game-input",
         type=Path,
         default=DEFAULT_USER_GAME_INPUT,
-        help="Caminho relativo ao base-dir para user_game_edges_enhanced.csv.",
+        help="Caminho relativo ao base-dir para user_game_edges.csv.",
     )
     parser.add_argument(
         "--game-tag-output",
@@ -65,7 +65,7 @@ def parse_args() -> argparse.Namespace:
         "--stats-output",
         type=Path,
         default=DEFAULT_STATS_OUTPUT,
-        help="Caminho relativo ao base-dir para salvar bipartite_stats_enhanced.json.",
+        help="Caminho relativo ao base-dir para salvar bipartite_stats.json.",
     )
     parser.add_argument(
         "--max-user-graphml-size-gb",

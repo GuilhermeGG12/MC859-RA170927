@@ -14,13 +14,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
-DEFAULT_STATS_INPUT = Path("data/processed/bipartite_analysis_stats_enhanced.json")
+DEFAULT_STATS_INPUT = Path("data/processed/bipartite_analysis_stats.json")
 DEFAULT_GAME_TAG_GLOBAL_OUTPUT = Path("figures/game_tag_degree_distribution_loglog.png")
 DEFAULT_GAME_TAG_GAMES_OUTPUT = Path("figures/game_tag_games_degree_loglog.png")
 DEFAULT_GAME_TAG_TAGS_OUTPUT = Path("figures/game_tag_tags_degree_loglog.png")
-DEFAULT_USER_GAME_GLOBAL_OUTPUT = Path("figures/user_game_degree_distribution_loglog_enhanced.png")
-DEFAULT_USER_GAME_USERS_OUTPUT = Path("figures/user_game_users_degree_loglog_enhanced.png")
-DEFAULT_USER_GAME_GAMES_OUTPUT = Path("figures/user_game_games_degree_loglog_enhanced.png")
+DEFAULT_USER_GAME_GLOBAL_OUTPUT = Path("figures/user_game_degree_distribution_loglog.png")
+DEFAULT_USER_GAME_USERS_OUTPUT = Path("figures/user_game_users_degree_loglog.png")
+DEFAULT_USER_GAME_GAMES_OUTPUT = Path("figures/user_game_games_degree_loglog.png")
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
         "--stats-input",
         type=Path,
         default=DEFAULT_STATS_INPUT,
-        help="Caminho relativo ao base-dir para bipartite_analysis_stats_enhanced.json.",
+        help="Caminho relativo ao base-dir para bipartite_analysis_stats.json.",
     )
     parser.add_argument(
         "--game-tag-global-output",

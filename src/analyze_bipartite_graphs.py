@@ -18,16 +18,14 @@ import networkx as nx
 
 
 DEFAULT_GAME_TAG_GRAPH_INPUT = Path("graphs/game_tag.graphml")
-DEFAULT_USER_GAME_EDGES_INPUT = Path("data/processed/user_game_edges_enhanced.csv")
-DEFAULT_STATS_OUTPUT = Path("data/processed/bipartite_analysis_stats_enhanced.json")
+DEFAULT_USER_GAME_EDGES_INPUT = Path("data/processed/user_game_edges.csv")
+DEFAULT_STATS_OUTPUT = Path("data/processed/bipartite_analysis_stats.json")
 DEFAULT_GAME_TAG_DEGREE_FIGURE = Path("figures/game_tag_degree_distribution.png")
 DEFAULT_GAME_TAG_COMPONENT_FIGURE = Path(
     "figures/game_tag_component_size_distribution.png"
 )
-DEFAULT_USER_GAME_DEGREE_FIGURE = Path("figures/user_game_degree_distribution_enhanced.png")
-DEFAULT_USER_GAME_COMPONENT_FIGURE = Path(
-    "figures/user_game_component_size_distribution_enhanced.png"
-)
+DEFAULT_USER_GAME_DEGREE_FIGURE = Path("figures/user_game_degree_distribution.png")
+DEFAULT_USER_GAME_COMPONENT_FIGURE = Path("figures/user_game_component_size_distribution.png")
 
 
 class DisjointSetUnion:
@@ -84,13 +82,13 @@ def parse_args() -> argparse.Namespace:
         "--user-game-edges-input",
         type=Path,
         default=DEFAULT_USER_GAME_EDGES_INPUT,
-        help="Caminho relativo ao base-dir para data/processed/user_game_edges_enhanced.csv.",
+        help="Caminho relativo ao base-dir para data/processed/user_game_edges.csv.",
     )
     parser.add_argument(
         "--stats-output",
         type=Path,
         default=DEFAULT_STATS_OUTPUT,
-        help="Caminho relativo ao base-dir para salvar bipartite_analysis_stats_enhanced.json.",
+        help="Caminho relativo ao base-dir para salvar bipartite_analysis_stats.json.",
     )
     parser.add_argument(
         "--game-tag-degree-figure",

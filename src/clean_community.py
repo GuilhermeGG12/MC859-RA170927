@@ -9,16 +9,19 @@ from pathlib import Path
 import pandas as pd
 
 
-DEFAULT_RECOMMENDATIONS_INPUT = Path("data/raw/recommendations.csv")
+DEFAULT_INPUT = Path("archive/community_base/data/processed/user_game_edges_base.csv")
 DEFAULT_EDGES_OUTPUT = Path("data/processed/user_game_edges.csv")
 DEFAULT_STATS_OUTPUT = Path("data/processed/community_stats.json")
 DEFAULT_FILTER_SUMMARY_OUTPUT = Path("data/processed/community_filter_summary.json")
 DEFAULT_CHUNK_SIZE = 1_000_000
+DEFAULT_MIN_USER_GAMES = 2
+DEFAULT_MAX_USER_GAMES = 30
+DEFAULT_MIN_GAME_USERS = 10
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Materializa o dataset final usuario-jogo da comunidade."
+        description="Gera a versao final oficial do dataset usuario-jogo."
     )
     parser.add_argument(
         "--base-dir",
@@ -27,10 +30,10 @@ def parse_args() -> argparse.Namespace:
         help="Diretorio raiz do projeto.",
     )
     parser.add_argument(
-        "--recommendations-input",
+        "--input",
         type=Path,
-        default=DEFAULT_RECOMMENDATIONS_INPUT,
-        help="Caminho relativo ao base-dir para recommendations.csv.",
+        default=DEFAULT_INPUT,
+        help="Caminho relativo ao base-dir para o dataset base historico user_game_edges_base.csv.",
     )
     parser.add_argument(
         "--edges-output",
@@ -51,10 +54,28 @@ def parse_args() -> argparse.Namespace:
         help="Caminho relativo ao base-dir para salvar community_filter_summary.json.",
     )
     parser.add_argument(
+        "--min-user-games",
+        type=int,
+        default=DEFAULT_MIN_USER_GAMES,
+        help="Grau minimo final por usuario.",
+    )
+    parser.add_argument(
+        "--max-user-games",
+        type=int,
+        default=DEFAULT_MAX_USER_GAMES,
+        help="Grau maximo final por usuario.",
+    )
+    parser.add_argument(
+        "--min-game-users",
+        type=int,
+        default=DEFAULT_MIN_GAME_USERS,
+        help="Grau minimo final por jogo.",
+    )
+    parser.add_argument(
         "--chunk-size",
         type=int,
         default=DEFAULT_CHUNK_SIZE,
-        help="Numero de linhas por chunk na leitura do CSV bruto.",
+        help="Numero de linhas por chunk na leitura e escrita.",
     )
     return parser.parse_args()
 
@@ -72,17 +93,14 @@ def connect_sqlite(db_path: Path) -> sqlite3.Connection:
     return conn
 
 
-def load_interactions(
-    recommendations_input: Path,
-    conn: sqlite3.Connection,
-    chunk_size: int,
-) -> dict[str, int]:
-    raw_rows = 0
+def load_base_edges(input_path: Path, conn: sqlite3.Connection, chunk_size: int) -> dict[str, int]:
+    if not input_path.exists():
+        raise FileNotFoundError(f"Arquivo nao encontrado: {input_path}")
 
-    conn.execute("DROP TABLE IF EXISTS raw_edges")
+    conn.execute("DROP TABLE IF EXISTS base_edges")
     conn.execute(
         """
-        CREATE TABLE raw_edges (
+        CREATE TABLE base_edges (
             user_id INTEGER NOT NULL,
             app_id INTEGER NOT NULL,
             PRIMARY KEY (user_id, app_id)
@@ -90,118 +108,286 @@ def load_interactions(
         """
     )
 
-    for chunk in pd.read_csv(
-        recommendations_input,
-        usecols=["user_id", "app_id"],
-        chunksize=chunk_size,
-    ):
-        raw_rows += int(len(chunk))
-        chunk = chunk.dropna(subset=["user_id", "app_id"])
-        if chunk.empty:
-            continue
-
+    rows = 0
+    for chunk in pd.read_csv(input_path, chunksize=chunk_size):
+        expected_columns = ["user_id", "app_id"]
+        if list(chunk.columns) != expected_columns:
+            raise AssertionError(f"Colunas esperadas em {input_path}: {expected_columns}")
+        chunk = chunk.dropna(subset=expected_columns)
         chunk = chunk.astype({"user_id": "int64", "app_id": "int64"})
-        chunk = chunk[["user_id", "app_id"]]
-        chunk = chunk.drop_duplicates(subset=["user_id", "app_id"])
-
+        rows += int(len(chunk))
         conn.executemany(
-            "INSERT OR IGNORE INTO raw_edges (user_id, app_id) VALUES (?, ?)",
+            "INSERT OR IGNORE INTO base_edges (user_id, app_id) VALUES (?, ?)",
             chunk.itertuples(index=False, name=None),
         )
         conn.commit()
 
-    deduplicated_edges = int(
-        conn.execute("SELECT COUNT(*) FROM raw_edges").fetchone()[0]
-    )
-    n_users_before = int(
-        conn.execute("SELECT COUNT(DISTINCT user_id) FROM raw_edges").fetchone()[0]
-    )
-    n_games_before = int(
-        conn.execute("SELECT COUNT(DISTINCT app_id) FROM raw_edges").fetchone()[0]
-    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_base_edges_app_id ON base_edges(app_id)")
+    conn.commit()
 
-    if deduplicated_edges == 0:
-        raise AssertionError("Nenhuma interacao usuario-jogo foi carregada")
+    n_edges = int(conn.execute("SELECT COUNT(*) FROM base_edges").fetchone()[0])
+    n_users = int(conn.execute("SELECT COUNT(DISTINCT user_id) FROM base_edges").fetchone()[0])
+    n_games = int(conn.execute("SELECT COUNT(DISTINCT app_id) FROM base_edges").fetchone()[0])
+
+    if n_edges == 0:
+        raise AssertionError("Dataset usuario-jogo base esta vazio")
 
     return {
-        "raw_rows": raw_rows,
-        "deduplicated_edges": deduplicated_edges,
-        "n_users_before_filter": n_users_before,
-        "n_games_before_filter": n_games_before,
+        "input_rows": rows,
+        "base_n_users": n_users,
+        "base_n_games": n_games,
+        "base_n_edges": n_edges,
     }
 
 
-def apply_user_filters(conn: sqlite3.Connection) -> None:
-    conn.execute("DROP TABLE IF EXISTS user_counts")
+def apply_final_filters(
+    conn: sqlite3.Connection,
+    min_user_games: int,
+    max_user_games: int,
+    min_game_users: int,
+) -> dict[str, int]:
+    conn.execute("DROP TABLE IF EXISTS user_counts_initial")
     conn.execute(
         """
-        CREATE TABLE user_counts AS
+        CREATE TABLE user_counts_initial AS
         SELECT user_id, COUNT(*) AS n_games
-        FROM raw_edges
+        FROM base_edges
         GROUP BY user_id
         """
     )
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_user_counts_user_id ON user_counts(user_id)")
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_user_counts_initial_user_id "
+        "ON user_counts_initial(user_id)"
+    )
 
-    conn.execute("DROP TABLE IF EXISTS filtered_users")
+    conn.execute("DROP TABLE IF EXISTS user_filtered_edges")
     conn.execute(
         """
-        CREATE TABLE filtered_users AS
-        SELECT user_id, n_games
-        FROM user_counts
-        WHERE n_games BETWEEN 2 AND 100
+        CREATE TABLE user_filtered_edges AS
+        SELECT e.user_id, e.app_id
+        FROM base_edges AS e
+        INNER JOIN user_counts_initial AS c
+            ON c.user_id = e.user_id
+        WHERE c.n_games BETWEEN ? AND ?
+        ORDER BY e.user_id, e.app_id
+        """,
+        (min_user_games, max_user_games),
+    )
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_user_filtered_edges_pair "
+        "ON user_filtered_edges(user_id, app_id)"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_user_filtered_edges_app_id "
+        "ON user_filtered_edges(app_id)"
+    )
+
+    conn.execute("DROP TABLE IF EXISTS game_counts_after_user_filter")
+    conn.execute(
+        """
+        CREATE TABLE game_counts_after_user_filter AS
+        SELECT app_id, COUNT(*) AS n_users
+        FROM user_filtered_edges
+        GROUP BY app_id
         """
     )
     conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_filtered_users_user_id ON filtered_users(user_id)"
+        "CREATE INDEX IF NOT EXISTS idx_game_counts_after_user_filter_app_id "
+        "ON game_counts_after_user_filter(app_id)"
     )
+
+    conn.execute("DROP TABLE IF EXISTS working_edges")
+    conn.execute(
+        """
+        CREATE TABLE working_edges AS
+        SELECT user_id, app_id
+        FROM user_filtered_edges
+        ORDER BY user_id, app_id
+        """
+    )
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_working_edges_pair "
+        "ON working_edges(user_id, app_id)"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_working_edges_app_id "
+        "ON working_edges(app_id)"
+    )
+    conn.commit()
+
+    iterations = 0
+    total_removed_low_game_degree_edges = 0
+    total_removed_low_user_degree_edges = 0
+
+    while True:
+        iterations += 1
+        conn.execute("DROP TABLE IF EXISTS low_degree_games")
+        conn.execute(
+            """
+            CREATE TABLE low_degree_games AS
+            SELECT app_id
+            FROM working_edges
+            GROUP BY app_id
+            HAVING COUNT(*) < ?
+            """,
+            (min_game_users,),
+        )
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_low_degree_games_app_id "
+            "ON low_degree_games(app_id)"
+        )
+        cursor = conn.execute(
+            """
+            DELETE FROM working_edges
+            WHERE app_id IN (SELECT app_id FROM low_degree_games)
+            """
+        )
+        removed_game_edges = int(cursor.rowcount if cursor.rowcount != -1 else 0)
+        total_removed_low_game_degree_edges += removed_game_edges
+
+        conn.execute("DROP TABLE IF EXISTS low_degree_users")
+        conn.execute(
+            """
+            CREATE TABLE low_degree_users AS
+            SELECT user_id
+            FROM working_edges
+            GROUP BY user_id
+            HAVING COUNT(*) < ?
+            """,
+            (min_user_games,),
+        )
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_low_degree_users_user_id "
+            "ON low_degree_users(user_id)"
+        )
+        cursor = conn.execute(
+            """
+            DELETE FROM working_edges
+            WHERE user_id IN (SELECT user_id FROM low_degree_users)
+            """
+        )
+        removed_user_edges = int(cursor.rowcount if cursor.rowcount != -1 else 0)
+        total_removed_low_user_degree_edges += removed_user_edges
+        conn.commit()
+
+        if removed_game_edges == 0 and removed_user_edges == 0:
+            break
 
     conn.execute("DROP TABLE IF EXISTS final_edges")
     conn.execute(
         """
         CREATE TABLE final_edges AS
-        SELECT r.user_id, r.app_id
-        FROM raw_edges AS r
-        INNER JOIN filtered_users AS u
-            ON u.user_id = r.user_id
-        ORDER BY r.user_id, r.app_id
+        SELECT user_id, app_id
+        FROM working_edges
+        ORDER BY user_id, app_id
         """
     )
     conn.execute(
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_final_edges_pair ON final_edges(user_id, app_id)"
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_final_edges_pair "
+        "ON final_edges(user_id, app_id)"
     )
-    conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_final_edges_app_id ON final_edges(app_id)"
-    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_final_edges_app_id ON final_edges(app_id)")
     conn.commit()
+
+    min_final_game_degree = int(
+        conn.execute(
+            """
+            SELECT MIN(n_users)
+            FROM (
+                SELECT COUNT(*) AS n_users
+                FROM final_edges
+                GROUP BY app_id
+            )
+            """
+        ).fetchone()[0]
+        or 0
+    )
+    if min_final_game_degree < min_game_users:
+        raise AssertionError(
+            "Filtro final deixou jogos abaixo do minimo. "
+            f"min_final_game_degree={min_final_game_degree}"
+        )
+
+    return {
+        "n_users_after_user_filter": int(
+            conn.execute("SELECT COUNT(DISTINCT user_id) FROM user_filtered_edges").fetchone()[0]
+        ),
+        "n_games_after_user_filter": int(
+            conn.execute("SELECT COUNT(DISTINCT app_id) FROM user_filtered_edges").fetchone()[0]
+        ),
+        "n_edges_after_user_filter": int(
+            conn.execute("SELECT COUNT(*) FROM user_filtered_edges").fetchone()[0]
+        ),
+        "n_games_after_game_filter": int(
+            conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM game_counts_after_user_filter
+                WHERE n_users >= ?
+                """,
+                (min_game_users,),
+            ).fetchone()[0]
+        ),
+        "n_edges_after_game_filter": int(
+            conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM user_filtered_edges AS e
+                INNER JOIN game_counts_after_user_filter AS c
+                    ON c.app_id = e.app_id
+                WHERE c.n_users >= ?
+                """,
+                (min_game_users,),
+            ).fetchone()[0]
+        ),
+        "core_pruning_iterations": iterations,
+        "removed_low_game_degree_edges_in_core": total_removed_low_game_degree_edges,
+        "removed_low_user_degree_edges_in_core": total_removed_low_user_degree_edges,
+    }
 
 
 def build_stats(conn: sqlite3.Connection) -> dict[str, int | float]:
     n_edges = int(conn.execute("SELECT COUNT(*) FROM final_edges").fetchone()[0])
-    n_users = int(conn.execute("SELECT COUNT(*) FROM filtered_users").fetchone()[0])
-    n_games = int(
-        conn.execute("SELECT COUNT(DISTINCT app_id) FROM final_edges").fetchone()[0]
-    )
+    n_users = int(conn.execute("SELECT COUNT(DISTINCT user_id) FROM final_edges").fetchone()[0])
+    n_games = int(conn.execute("SELECT COUNT(DISTINCT app_id) FROM final_edges").fetchone()[0])
 
     min_games_per_user, max_games_per_user, avg_games_per_user = conn.execute(
         """
         SELECT MIN(n_games), MAX(n_games), AVG(n_games)
-        FROM filtered_users
+        FROM (
+            SELECT COUNT(*) AS n_games
+            FROM final_edges
+            GROUP BY user_id
+        )
         """
     ).fetchone()
 
-    avg_users_per_game = conn.execute(
+    min_users_per_game, max_users_per_game, avg_users_per_game = conn.execute(
         """
-        SELECT AVG(user_count)
+        SELECT MIN(n_users), MAX(n_users), AVG(n_users)
         FROM (
-            SELECT COUNT(*) AS user_count
+            SELECT COUNT(*) AS n_users
             FROM final_edges
             GROUP BY app_id
         )
         """
-    ).fetchone()[0]
+    ).fetchone()
 
-    stats = {
+    projection_pairs_from_users = int(
+        conn.execute(
+            """
+            SELECT SUM(n_games * (n_games - 1) / 2)
+            FROM (
+                SELECT COUNT(*) AS n_games
+                FROM final_edges
+                GROUP BY user_id
+            )
+            """
+        ).fetchone()[0]
+        or 0
+    )
+
+    return {
         "n_users": n_users,
         "n_games": n_games,
         "n_edges": n_edges,
@@ -209,39 +395,38 @@ def build_stats(conn: sqlite3.Connection) -> dict[str, int | float]:
         "avg_users_per_game": round(float(avg_users_per_game or 0.0), 4),
         "min_games_per_user": int(min_games_per_user or 0),
         "max_games_per_user": int(max_games_per_user or 0),
+        "min_users_per_game": int(min_users_per_game or 0),
+        "max_users_per_game": int(max_users_per_game or 0),
+        "projection_pairs_from_users": projection_pairs_from_users,
     }
-
-    if stats["n_edges"] == 0:
-        raise AssertionError("user_game_edges.csv nao pode ficar vazio")
-
-    return stats
 
 
 def build_filter_summary(
-    conn: sqlite3.Connection, load_summary: dict[str, int], stats: dict[str, int | float]
+    load_summary: dict[str, int],
+    filter_summary: dict[str, int],
+    stats: dict[str, int | float],
+    min_user_games: int,
+    max_user_games: int,
+    min_game_users: int,
 ) -> dict[str, int | float]:
-    removed_single_game_users = int(
-        conn.execute("SELECT COUNT(*) FROM user_counts WHERE n_games < 2").fetchone()[0]
-    )
-    removed_super_active_users = int(
-        conn.execute("SELECT COUNT(*) FROM user_counts WHERE n_games > 100").fetchone()[0]
-    )
-
     return {
         **load_summary,
+        **filter_summary,
+        "filter_name": "final",
+        "min_user_games": min_user_games,
+        "max_user_games": max_user_games,
+        "min_game_users": min_game_users,
         "n_users_after_filter": int(stats["n_users"]),
         "n_games_after_filter": int(stats["n_games"]),
         "n_edges_after_filter": int(stats["n_edges"]),
-        "removed_single_game_users": removed_single_game_users,
-        "removed_super_active_users": removed_super_active_users,
         "users_preserved_pct": round(
-            100 * int(stats["n_users"]) / load_summary["n_users_before_filter"], 2
+            100 * int(stats["n_users"]) / load_summary["base_n_users"], 2
         ),
         "games_preserved_pct": round(
-            100 * int(stats["n_games"]) / load_summary["n_games_before_filter"], 2
+            100 * int(stats["n_games"]) / load_summary["base_n_games"], 2
         ),
         "edges_preserved_pct": round(
-            100 * int(stats["n_edges"]) / load_summary["deduplicated_edges"], 2
+            100 * int(stats["n_edges"]) / load_summary["base_n_edges"], 2
         ),
     }
 
@@ -265,14 +450,17 @@ def save_outputs(
 
     for chunk in pd.read_sql_query(query, conn, chunksize=chunk_size):
         chunk = chunk.astype({"user_id": "int64", "app_id": "int64"})
-        chunk.to_csv(edges_output, index=False, mode="a" if wrote_header else "w", header=not wrote_header)
+        chunk.to_csv(
+            edges_output,
+            index=False,
+            mode="a" if wrote_header else "w",
+            header=not wrote_header,
+        )
         exported_rows += int(len(chunk))
         wrote_header = True
 
     if exported_rows != int(stats["n_edges"]):
-        raise AssertionError(
-            "Numero de linhas exportadas difere das estatisticas calculadas"
-        )
+        raise AssertionError("Numero de linhas exportadas difere das estatisticas")
 
     stats_output.write_text(
         json.dumps(stats, ensure_ascii=True, indent=2) + "\n",
@@ -285,7 +473,12 @@ def save_outputs(
 
 
 def validate_outputs(
-    conn: sqlite3.Connection, edges_output: Path, stats: dict[str, int | float]
+    conn: sqlite3.Connection,
+    edges_output: Path,
+    stats: dict[str, int | float],
+    min_user_games: int,
+    max_user_games: int,
+    min_game_users: int,
 ) -> None:
     duplicate_count = int(
         conn.execute(
@@ -307,13 +500,35 @@ def validate_outputs(
         conn.execute(
             """
             SELECT COUNT(*)
-            FROM filtered_users
-            WHERE n_games < 2 OR n_games > 100
-            """
+            FROM (
+                SELECT user_id, COUNT(*) AS n_games
+                FROM final_edges
+                GROUP BY user_id
+            )
+            WHERE n_games < ? OR n_games > ?
+            """,
+            (min_user_games, max_user_games),
         ).fetchone()[0]
     )
     if invalid_users != 0:
-        raise AssertionError("Existem usuarios finais fora do intervalo [2, 100]")
+        raise AssertionError("Existem usuarios finais fora do intervalo permitido")
+
+    invalid_games = int(
+        conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM (
+                SELECT app_id, COUNT(*) AS n_users
+                FROM final_edges
+                GROUP BY app_id
+            )
+            WHERE n_users < ?
+            """,
+            (min_game_users,),
+        ).fetchone()[0]
+    )
+    if invalid_games != 0:
+        raise AssertionError("Existem jogos finais abaixo do minimo permitido")
 
     if not edges_output.exists() or edges_output.stat().st_size == 0:
         raise AssertionError("user_game_edges.csv nao foi gerado corretamente")
@@ -329,7 +544,7 @@ def validate_outputs(
         raise AssertionError("Tipos inconsistentes em user_game_edges.csv")
 
     sql_n_users = int(
-        conn.execute("SELECT COUNT(*) FROM filtered_users").fetchone()[0]
+        conn.execute("SELECT COUNT(DISTINCT user_id) FROM final_edges").fetchone()[0]
     )
     sql_n_games = int(
         conn.execute("SELECT COUNT(DISTINCT app_id) FROM final_edges").fetchone()[0]
@@ -347,26 +562,31 @@ def validate_outputs(
 def main() -> None:
     args = parse_args()
     base_dir = args.base_dir.resolve()
-    recommendations_input = resolve_path(base_dir, args.recommendations_input)
+
+    input_path = resolve_path(base_dir, args.input)
     edges_output = resolve_path(base_dir, args.edges_output)
     stats_output = resolve_path(base_dir, args.stats_output)
     filter_summary_output = resolve_path(base_dir, args.filter_summary_output)
 
-    if not recommendations_input.exists():
-        raise FileNotFoundError(f"Arquivo nao encontrado: {recommendations_input}")
-
-    with tempfile.TemporaryDirectory(prefix="mc859-community-") as temp_dir:
-        db_path = Path(temp_dir) / "community.sqlite"
-        conn = connect_sqlite(db_path)
+    with tempfile.TemporaryDirectory(prefix="mc859-user-game-final-") as temp_dir:
+        conn = connect_sqlite(Path(temp_dir) / "final.sqlite")
         try:
-            load_summary = load_interactions(
-                recommendations_input=recommendations_input,
+            load_summary = load_base_edges(input_path, conn, args.chunk_size)
+            filter_summary_base = apply_final_filters(
                 conn=conn,
-                chunk_size=args.chunk_size,
+                min_user_games=args.min_user_games,
+                max_user_games=args.max_user_games,
+                min_game_users=args.min_game_users,
             )
-            apply_user_filters(conn)
             stats = build_stats(conn)
-            filter_summary = build_filter_summary(conn, load_summary, stats)
+            filter_summary = build_filter_summary(
+                load_summary=load_summary,
+                filter_summary=filter_summary_base,
+                stats=stats,
+                min_user_games=args.min_user_games,
+                max_user_games=args.max_user_games,
+                min_game_users=args.min_game_users,
+            )
             save_outputs(
                 conn=conn,
                 edges_output=edges_output,
@@ -376,18 +596,16 @@ def main() -> None:
                 filter_summary=filter_summary,
                 chunk_size=args.chunk_size,
             )
-            validate_outputs(conn, edges_output, stats)
+            validate_outputs(
+                conn=conn,
+                edges_output=edges_output,
+                stats=stats,
+                min_user_games=args.min_user_games,
+                max_user_games=args.max_user_games,
+                min_game_users=args.min_game_users,
+            )
         finally:
             conn.close()
-
-    print(f"usuarios: {stats['n_users']}")
-    print(f"jogos: {stats['n_games']}")
-    print(f"arestas: {stats['n_edges']}")
-    print(f"avg_games_per_user: {stats['avg_games_per_user']:.4f}")
-    print(
-        "Arquivos salvos em: "
-        f"{edges_output}, {stats_output} e {filter_summary_output}"
-    )
 
 
 if __name__ == "__main__":
