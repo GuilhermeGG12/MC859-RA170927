@@ -1,0 +1,19 @@
+{
+  "game_tag": {
+    "n_nodes": 48105,
+    "n_edges": 219845,
+    "avg_degree": 9.1402,
+    "graphml_size_bytes": 18003553
+  },
+  "user_game": {
+    "n_nodes": 6130165,
+    "n_edges": 27874454,
+    "avg_degree": 9.0942,
+    "n_users": 6106423,
+    "n_games": 23742,
+    "graphml_estimated_size_bytes": 2101526253,
+    "graphml_estimated_size_gb": 1.9572,
+    "graphml_written": true,
+    "graphml_size_bytes": 2101526253
+  }
+}
