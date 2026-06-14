@@ -1,0 +1,39 @@
+{
+  "common_game_universe_size": 22708,
+  "catalog_final_projection": {
+    "input_file": "game_game_catalog_edges.csv",
+    "output_file": "game_game_catalog_edges_final.csv",
+    "threshold": 0.25,
+    "n_nodes": 22708,
+    "n_edges": 27905434,
+    "avg_degree": 2457.7624,
+    "n_components": 1,
+    "giant_component_size": 22708,
+    "giant_component_pct": 100.0,
+    "n_isolated_games": 0,
+    "min_shared_tags": 1,
+    "max_shared_tags": 14,
+    "avg_shared_tags": 2.225225,
+    "min_jaccard_tags": 0.25,
+    "max_jaccard_tags": 1.0,
+    "avg_jaccard_tags": 0.343754
+  },
+  "community_final_projection": {
+    "input_file": "game_game_community_edges.csv",
+    "output_file": "game_game_community_edges_final.csv",
+    "threshold": 0.002,
+    "n_nodes": 22708,
+    "n_edges": 1302892,
+    "avg_degree": 114.7518,
+    "n_components": 1,
+    "giant_component_size": 22708,
+    "giant_component_pct": 100.0,
+    "n_isolated_games": 0,
+    "min_shared_users": 1,
+    "max_shared_users": 9210,
+    "avg_shared_users": 8.9334,
+    "min_jaccard_users": 0.002,
+    "max_jaccard_users": 0.57971,
+    "avg_jaccard_users": 0.006034
+  }
+}

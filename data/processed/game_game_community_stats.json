@@ -1,0 +1,18 @@
+{
+  "source_graph": "graphs/user_game.graphml",
+  "implementation_input": "data/processed/user_game_edges.csv",
+  "n_rows_total": 27874454,
+  "n_users_total": 6106423,
+  "n_users_with_common_games": 4650702,
+  "n_games_in_common_universe": 22708,
+  "n_games_projected": 22708,
+  "raw_pair_incidences": 33493693,
+  "n_edges": 9737860,
+  "avg_degree": 857.659,
+  "min_shared_users": 1,
+  "max_shared_users": 9210,
+  "avg_shared_users": 3.439533,
+  "min_jaccard_users": 9e-06,
+  "max_jaccard_users": 0.57971,
+  "avg_jaccard_users": 0.00128
+}

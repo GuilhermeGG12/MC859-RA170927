@@ -13,3 +13,16 @@ graphs/user_game.graphml
 
 # Relatorios auxiliares e notas intermediarias
 notebooks/*.md
+
+# Artefatos grandes da fase final
+/data/processed/game_game_catalog_edges.csv
+/data/processed/game_game_catalog_edges_final.csv
+/data/processed/game_game_catalog_pairs.sqlite
+/data/processed/game_game_catalog_pairs.sqlite-shm
+/data/processed/game_game_catalog_pairs.sqlite-wal
+/data/processed/game_game_community_edges.csv
+/data/processed/game_game_community_edges_final.csv
+/data/processed/game_game_community_pairs.sqlite
+/data/processed/game_game_community_pairs.sqlite-shm
+/data/processed/game_game_community_pairs.sqlite-wal
+/data/processed/final_projection_shared_edge_weights.csv

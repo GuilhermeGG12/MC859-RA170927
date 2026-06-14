@@ -1,0 +1,16 @@
+{
+  "source_graph": "graphs/game_tag.graphml",
+  "n_graph_games_total": 47940,
+  "n_games_in_common_universe": 22708,
+  "n_games_projected": 22708,
+  "n_tags_incident_to_common_games": 165,
+  "raw_pair_incidences": 203692924,
+  "n_edges": 140916316,
+  "avg_degree": 12411.1605,
+  "min_shared_tags": 1,
+  "max_shared_tags": 14,
+  "avg_shared_tags": 1.445489,
+  "min_jaccard_tags": 0.03125,
+  "max_jaccard_tags": 1.0,
+  "avg_jaccard_tags": 0.169692
+}
