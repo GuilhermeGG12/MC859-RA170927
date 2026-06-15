@@ -166,6 +166,41 @@ Para leitura rapida da fase final, os arquivos mais importantes sao:
 - `data/processed/catalog_final_communities.csv`
 - `data/processed/community_final_communities.csv`
 
+## Mapa rapido de `data/processed`
+
+Os artefatos de `data/processed` estao organizados, na pratica, em cinco grupos:
+
+1. **limpeza do catalogo**
+   - `game_tag_edges_filtered.csv`
+   - `games_with_tags.csv`
+   - `catalog_stats.json`
+
+2. **limpeza da comunidade**
+   - `user_game_edges.csv`
+   - `community_stats.json`
+   - `community_filter_summary.json`
+
+3. **universo comum de jogos**
+   - `common_game_ids.csv`
+   - `common_game_id_map.csv`
+   - `common_game_stats.json`
+
+4. **projecoes jogo-jogo**
+   - `game_game_catalog_edges.csv` / `game_game_catalog_edges_final.csv`
+   - `game_game_community_edges.csv` / `game_game_community_edges_final.csv`
+   - `final_filtered_projection_stats.json`
+   - `projection_threshold_sweep_summary.json`
+
+5. **comparacao final**
+   - `final_projection_comparison_stats.json`
+   - `final_projection_shared_edge_weights.csv`
+   - `final_projection_community_comparison.json`
+   - `catalog_final_communities.csv` / `community_final_communities.csv`
+   - `final_projection_centrality_stats.json`
+   - `catalog_final_centrality_topk.csv` / `community_final_centrality_topk.csv`
+
+Arquivos como `*.sqlite`, analises de sensibilidade e tabelas exploratorias adicionais foram mantidos no repositorio como apoio de implementacao e validacao, mas nao sao os artefatos centrais para leitura dos resultados finais.
+
 ## Observacoes sobre os artefatos versionados
 
 - Os **grafos bipartidos oficiais** foram exportados em GraphML
