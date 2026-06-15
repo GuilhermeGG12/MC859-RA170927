@@ -202,9 +202,3 @@ O projeto usa bibliotecas cientificas padrao do ecossistema Python, incluindo:
 - `scikit-learn`
 - `igraph`
 - `leidenalg`
-
-## Observacoes finais
-
-- Dados brutos nao devem ser versionados neste repositorio.
-- Comparacoes entre catalogo e comunidade devem sempre respeitar a intersecao de jogos.
-- Scripts auxiliares de exploracao visual e preparacao de apresentacao nao fazem parte do pipeline oficial documentado aqui.
