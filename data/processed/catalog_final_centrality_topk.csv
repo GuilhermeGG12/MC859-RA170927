@@ -1,0 +1,76 @@
+projection,metric,rank,app_id,name,score
+catalog,strength,1,242590,Saints Row IV: Inauguration Station,2992.3610520001
+catalog,strength,2,246740,Huntsman: The Orphanage (Halloween Edition),2992.3610520001
+catalog,strength,3,263340,Continue?9876543210,2992.3610520001
+catalog,strength,4,270330,Ku: Shroud of the Morrigan,2992.3610520001
+catalog,strength,5,282640,LOST ORBIT,2992.3610520001
+catalog,strength,6,294280,Scooby Doo! & Looney Tunes Cartoon Universe: Adventure,2992.3610520001
+catalog,strength,7,297370,Hero of Many,2992.3610520001
+catalog,strength,8,297620,Rocko's Quest,2992.3610520001
+catalog,strength,9,299380,Masquerade: The Baubles of Doom,2992.3610520001
+catalog,strength,10,301980,Disney Pirates of the Caribbean: At Worlds End,2992.3610520001
+catalog,strength,11,303870,Blinding Dark,2992.3610520001
+catalog,strength,12,311770,LEGO® Pirates of the Caribbean: The Video Game,2992.3610520001
+catalog,strength,13,313590,Boo Bunny Plague,2992.3610520001
+catalog,strength,14,316260,Disney Universe,2992.3610520001
+catalog,strength,15,318350,Disney Fairies: Tinker Bell's Adventure,2992.3610520001
+catalog,strength,16,318950,Disney Tangled,2992.3610520001
+catalog,strength,17,319080,Disney Princess: My Fairytale Adventure,2992.3610520001
+catalog,strength,18,326420,Sam Glyph: Private Eye!,2992.3610520001
+catalog,strength,19,332700,Mike was Сursed,2992.3610520001
+catalog,strength,20,334070,Hektor,2992.3610520001
+catalog,strength,21,334370,From Earth,2992.3610520001
+catalog,strength,22,336220,ORBITOR,2992.3610520001
+catalog,strength,23,345200,Tasty Blue,2992.3610520001
+catalog,strength,24,345280,Lost in a Forest,2992.3610520001
+catalog,strength,25,346450,samurai_jazz,2992.3610520001
+catalog,betweenness,1,1568650,*NEW* SCUFFED EPIC VISUAL NOVEL,984744.9435301666
+catalog,betweenness,2,1599560,Wanderer,967071.1097840881
+catalog,betweenness,3,217200,Worms Armageddon,939877.5713504959
+catalog,betweenness,4,1927650,Animals Collision,844314.4593769667
+catalog,betweenness,5,23460,Ceville,792238.9076227316
+catalog,betweenness,6,504880,Pixel Puzzles 2: RADical ROACH,788000.9110043878
+catalog,betweenness,7,1278270,Fire Rescue Simulator,785173.100041007
+catalog,betweenness,8,873490,不落城-Unconquered Castle,764225.4314639907
+catalog,betweenness,9,1307480,Street Sniper,756207.6856342423
+catalog,betweenness,10,1205240,Tentacle Girl,755827.5838006072
+catalog,betweenness,11,1228560,Boxman's Struggle,748200.2772006729
+catalog,betweenness,12,719590,Mesozoica,735840.5937136203
+catalog,betweenness,13,1272580,Nine Witches: Family Disruption,735830.9277514637
+catalog,betweenness,14,1807080,Ghost Exile,719490.18831316
+catalog,betweenness,15,879670,Battle Simulator,714883.6107832054
+catalog,betweenness,16,1342040,Sylphy and the Sleepless Island,688190.569980936
+catalog,betweenness,17,1603720,Thy Creature,636221.1752397432
+catalog,betweenness,18,481510,Night in the Woods,632738.3885862213
+catalog,betweenness,19,1153460,Axegend VR,623712.101303158
+catalog,betweenness,20,1598560,Life On A Pizza,622227.3828950014
+catalog,betweenness,21,1740660,Miraculous: Rise of the Sphinx,622227.3828950014
+catalog,betweenness,22,1627040,학생들의 공포괴담 終 (Students' horrible stories FIN),615390.9098026336
+catalog,betweenness,23,297000,Heroes® of Might & Magic® III - HD Edition,615167.5631739204
+catalog,betweenness,24,282560,RollerCoaster Tycoon World™,611343.0375917614
+catalog,betweenness,25,1247100,SpellMaster: The Saga,610772.3864652128
+catalog,pagerank,1,1927650,Animals Collision,0.0002071839
+catalog,pagerank,2,1807080,Ghost Exile,0.0002018558
+catalog,pagerank,3,2170050,Wolfteam: Reboot,0.0001913105
+catalog,pagerank,4,2177030,Daddy,0.0001913105
+catalog,pagerank,5,1935660,Chop Goblins,0.0001892878
+catalog,pagerank,6,1908720,Half-Life: VR Mod,0.0001885765
+catalog,pagerank,7,1873030,Wolfenstein: Enemy Territory,0.00018793
+catalog,pagerank,8,1850070,Fireteam,0.0001871424
+catalog,pagerank,9,1975120,The Lost Dachshund,0.0001868517
+catalog,pagerank,10,1729420,PaintballX,0.0001851531
+catalog,pagerank,11,1779690,So long as there is Mercy,0.0001837482
+catalog,pagerank,12,1706540,Limitless Hunger,0.0001818791
+catalog,pagerank,13,1252560,Love Breakout,0.0001814157
+catalog,pagerank,14,1684930,CULTIC,0.0001803257
+catalog,pagerank,15,2060130,Return to Monkey Island,0.0001800939
+catalog,pagerank,16,1598560,Life On A Pizza,0.0001787085
+catalog,pagerank,17,1740660,Miraculous: Rise of the Sphinx,0.0001787085
+catalog,pagerank,18,1609730,Aliens vs. Ghosts,0.000178183
+catalog,pagerank,19,1605320,Unusual Findings,0.0001777276
+catalog,pagerank,20,1810610,Pants Quest,0.0001774784
+catalog,pagerank,21,1590910,Forgive Me Father,0.0001773415
+catalog,pagerank,22,1810270,Blood Nova,0.0001771445
+catalog,pagerank,23,1740680,Voodoo Detective,0.0001760187
+catalog,pagerank,24,1496320,Time Machine - Find Objects. Hidden Pictures Game,0.000175406
+catalog,pagerank,25,1521930,A Tale for Anna,0.000175406

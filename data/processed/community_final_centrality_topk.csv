@@ -1,0 +1,76 @@
+projection,metric,rank,app_id,name,score
+community,strength,1,2002450,停留此刻 Stay in the moment,4.828969
+community,strength,2,854860,Cows VS Vikings,4.776206
+community,strength,3,1219950,Evil Democracy: 1932,4.708948
+community,strength,4,2004360,Hell Division,4.544148
+community,strength,5,1152090,Elmarion: Dragon time,4.38738
+community,strength,6,2131200,NeverSynth,4.275975
+community,strength,7,1846630,花都之恋,4.200174
+community,strength,8,2093250,Witch Schools: Love Potions,4.129827
+community,strength,9,899190,A Piece of Wish upon the Stars,4.118124
+community,strength,10,1110720,The Last Companion-我与我行将离去的小友。,4.098269
+community,strength,11,1975420,Othello：Daynight Time Clash,4.090285
+community,strength,12,1724000,Time Lock VR 2,4.064875
+community,strength,13,1184810,Mainframe Defenders,3.836183
+community,strength,14,1954640,真空战姬,3.828488
+community,strength,15,2010830,Your Love Story 被你忘记的那个夏天,3.823326
+community,strength,16,673450,Time Lock VR 1,3.730492
+community,strength,17,1379970,Solar System VR,3.721758
+community,strength,18,846670,Saint Slaughter X Days,3.69779
+community,strength,19,1503920,Aery - A Journey Beyond Time,3.675516
+community,strength,20,1167700,hallucination - 幻觉,3.640718
+community,strength,21,685690,Guns'n'Stories: Bulletproof VR,3.600678
+community,strength,22,1493300,100 hidden aliens,3.55399
+community,strength,23,1849570,恋~一些小清新的猎奇故事~,3.541046
+community,strength,24,1238520,Dandelions in the Sky,3.536205
+community,strength,25,2026520,东方异乡录 ~the Apocryphal Gensoukyou,3.534808
+community,betweenness,1,691690,Ash of Gods: Redemption,2227066.0
+community,betweenness,2,661290,Arizona Derby,2158648.0
+community,betweenness,3,1146880,RRRR3,1904236.0
+community,betweenness,4,1048100,Peekaboo,1897197.0
+community,betweenness,5,1241100,POLYGON,1861020.0
+community,betweenness,6,485460,The Banner Saga 3,1844622.0
+community,betweenness,7,281640,The Banner Saga 2,1813573.0
+community,betweenness,8,575960,The Wisbey Mystery,1794273.0
+community,betweenness,9,237990,The Banner Saga,1785232.0
+community,betweenness,10,1219950,Evil Democracy: 1932,1755315.0
+community,betweenness,11,828950,Howlville: The Dark Past,1664757.0
+community,betweenness,12,1504340,CrushBorgs,1651816.0
+community,betweenness,13,558490,Crossroad Mysteries: The Broken Deal,1623989.6666666667
+community,betweenness,14,1495670,Leaper,1503304.0
+community,betweenness,15,1364010,The Librarian (Special Edition),1499170.5
+community,betweenness,16,1080700,Swordbreaker: Origins,1462476.833333333
+community,betweenness,17,397720,Romance of the Three Kingdoms Maker,1418273.0
+community,betweenness,18,1828640,IllusionCircle,1407243.0
+community,betweenness,19,400200,The Mystery of a Lost Planet,1399031.3333333335
+community,betweenness,20,817220,The Forestale,1372783.0
+community,betweenness,21,1489500,Crowhille - Detective Case Files VR,1328086.0
+community,betweenness,22,1296880,Sausage Hunter,1326932.0
+community,betweenness,23,1903630,Evasion from Hell,1326558.0
+community,betweenness,24,220,Half-Life 2,1320782.0
+community,betweenness,25,1664910,Murder Diaries,1319457.9166666665
+community,pagerank,1,854860,Cows VS Vikings,0.0002254017
+community,pagerank,2,1219950,Evil Democracy: 1932,0.0002159106
+community,pagerank,3,1152090,Elmarion: Dragon time,0.0001952831
+community,pagerank,4,2002450,停留此刻 Stay in the moment,0.000187019
+community,pagerank,5,2004360,Hell Division,0.000183015
+community,pagerank,6,503460,Security Hole,0.0001813631
+community,pagerank,7,1493300,100 hidden aliens,0.0001773864
+community,pagerank,8,1184810,Mainframe Defenders,0.0001755641
+community,pagerank,9,1828640,IllusionCircle,0.000174223
+community,pagerank,10,2131200,NeverSynth,0.0001721481
+community,pagerank,11,1480120,100 hidden eternals,0.0001655755
+community,pagerank,12,2093250,Witch Schools: Love Potions,0.0001648779
+community,pagerank,13,1724000,Time Lock VR 2,0.0001637451
+community,pagerank,14,1846630,花都之恋,0.000163573
+community,pagerank,15,1708190,100 hidden rams,0.0001634419
+community,pagerank,16,2010830,Your Love Story 被你忘记的那个夏天,0.0001630409
+community,pagerank,17,560720,Dark Angels: Masquerade of Shadows,0.0001623665
+community,pagerank,18,899190,A Piece of Wish upon the Stars,0.0001621333
+community,pagerank,19,1300430,Whiskey.Mafia. Leo's Family,0.0001619039
+community,pagerank,20,1975420,Othello：Daynight Time Clash,0.0001606521
+community,pagerank,21,1241040,Deep Despair,0.0001594273
+community,pagerank,22,1549030,100 hidden snails 2,0.0001585374
+community,pagerank,23,1573750,100 hidden mushrooms,0.0001582811
+community,pagerank,24,1379970,Solar System VR,0.0001581793
+community,pagerank,25,1498310,100 hidden cupcakes,0.0001579254

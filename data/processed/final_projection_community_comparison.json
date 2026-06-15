@@ -1,0 +1,72 @@
+{
+  "common_game_universe_size": 22708,
+  "algorithm": "leiden",
+  "top_k": 50,
+  "selection_mode": "union",
+  "resolution": 1.0,
+  "seed": 42,
+  "catalog_working_graph": {
+    "n_nodes": 22708,
+    "n_edges": 880612,
+    "avg_degree": 77.5596,
+    "n_components": 1,
+    "giant_component_size": 22708,
+    "giant_component_pct": 100.0,
+    "n_isolated_games": 0,
+    "weight_min": 0.25,
+    "weight_max": 1.0,
+    "weight_avg": 0.653846
+  },
+  "catalog_partition": {
+    "n_communities": 31,
+    "largest_community_size": 2185,
+    "largest_community_pct": 9.6222,
+    "community_sizes_top10": [
+      2185,
+      1828,
+      1738,
+      1645,
+      1550,
+      1477,
+      1389,
+      1220,
+      1154,
+      894
+    ],
+    "modularity": 0.785552
+  },
+  "community_working_graph": {
+    "n_nodes": 22708,
+    "n_edges": 628273,
+    "avg_degree": 55.3349,
+    "n_components": 1,
+    "giant_component_size": 22708,
+    "giant_component_pct": 100.0,
+    "n_isolated_games": 0,
+    "weight_min": 0.002,
+    "weight_max": 0.57971,
+    "weight_avg": 0.009174
+  },
+  "community_partition": {
+    "n_communities": 18,
+    "largest_community_size": 4728,
+    "largest_community_pct": 20.8209,
+    "community_sizes_top10": [
+      4728,
+      3654,
+      3572,
+      2441,
+      2023,
+      1346,
+      1034,
+      946,
+      919,
+      897
+    ],
+    "modularity": 0.403119
+  },
+  "partition_comparison": {
+    "ari": 0.057798,
+    "nmi": 0.143954
+  }
+}
