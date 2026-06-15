@@ -12,7 +12,7 @@ O objetivo central da fase final foi verificar em que medida essas duas nocoes d
 - `src/`: scripts reproduziveis via linha de comando;
 - `data/raw/`: dados brutos locais, fora do versionamento;
 - `data/processed/`: tabelas processadas e estatisticas intermediarias/finais;
-- `graphs/`: grafos bipartidos exportados em GraphML;
+- `graphs/`: reservado para grafos locais de trabalho, nao versionados no repositorio;
 - `figures/`: figuras geradas para analise e relatorio;
 - `notebooks/`: exploracao complementar mantida apenas quando util ao projeto.
 
@@ -110,10 +110,12 @@ python src/plot_bipartite_degree_loglog.py --base-dir .
 
 Saidas principais:
 
-- `graphs/game_tag.graphml`
-- `graphs/user_game.graphml`
 - `data/processed/bipartite_stats.json`
 - `data/processed/bipartite_analysis_stats.json`
+
+Os dois grafos bipartidos oficiais em GraphML (`game_tag.graphml` e `user_game.graphml`) foram disponibilizados externamente no Mendeley Data:
+
+- <https://data.mendeley.com/datasets/mmy9rsng2y/1>
 
 ### 5. Projecoes jogo-jogo
 
@@ -166,7 +168,8 @@ Para leitura rapida da fase final, os arquivos mais importantes sao:
 
 ## Observacoes sobre os artefatos versionados
 
-- Os **grafos bipartidos oficiais** foram exportados em GraphML e estao em `graphs/`.
+- Os **grafos bipartidos oficiais** foram exportados em GraphML, mas nao ficam mais versionados neste repositorio.
+- Esses artefatos podem ser obtidos no Mendeley Data: <https://data.mendeley.com/datasets/mmy9rsng2y/1>.
 - As **projecoes finais** foram mantidas principalmente como **listas de arestas em CSV** e estatisticas em JSON.
 - Optou-se por nao versionar GraphMLs das projecoes finais porque as listas de arestas ja sao os artefatos oficiais reproduziveis usados em toda a analise, com menor redundancia e custo de armazenamento.
 - Os dados brutos originais e alguns artefatos historicos de apoio ficam fora do versionamento normal.
