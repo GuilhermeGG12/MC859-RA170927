@@ -168,11 +168,9 @@ Para leitura rapida da fase final, os arquivos mais importantes sao:
 
 ## Observacoes sobre os artefatos versionados
 
-- Os **grafos bipartidos oficiais** foram exportados em GraphML, mas nao ficam mais versionados neste repositorio.
-- Esses artefatos podem ser obtidos no Mendeley Data: <https://data.mendeley.com/datasets/mmy9rsng2y/1>.
+- Os **grafos bipartidos oficiais** foram exportados em GraphML
+- Eles podem ser obtidos no Mendeley Data: <https://data.mendeley.com/datasets/mmy9rsng2y/1>.
 - As **projecoes finais** foram mantidas principalmente como **listas de arestas em CSV** e estatisticas em JSON.
-- Optou-se por nao versionar GraphMLs das projecoes finais porque as listas de arestas ja sao os artefatos oficiais reproduziveis usados em toda a analise, com menor redundancia e custo de armazenamento.
-- Os dados brutos originais e alguns artefatos historicos de apoio ficam fora do versionamento normal.
 
 ## Metricas usadas na fase final
 
