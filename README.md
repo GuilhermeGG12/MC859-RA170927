@@ -1,4 +1,4 @@
-# MC859 — Comparacao entre Projecoes de Jogos da Steam
+# MC859 — Deteccao de comunidades e jogos-pontes na Steam a partir de metadados do catalogo e da comunidade de jogadores
 
 Projeto da disciplina MC859 dedicado a comparar duas redes jogo-jogo construidas a partir de fontes distintas de relacao entre jogos da Steam:
 
