@@ -1,4 +1,4 @@
-# MC859 — Deteccao de comunidades e jogos-pontes na Steam a partir de metadados do catalogo e da comunidade de jogadores
+# MC859 — Deteccao de comunidades e jogos-ponte na Steam a partir de metadados do catalogo e da comunidade de jogadores
 
 Projeto da disciplina MC859 dedicado a comparar duas redes jogo-jogo construidas a partir de fontes distintas de relacao entre jogos da Steam:
 
@@ -10,9 +10,7 @@ O objetivo central da fase final foi verificar em que medida essas duas nocoes d
 ## Estrutura do repositorio
 
 - `src/`: scripts reproduziveis via linha de comando;
-- `data/raw/`: dados brutos locais, fora do versionamento;
 - `data/processed/`: tabelas processadas e estatisticas intermediarias/finais;
-- `graphs/`: reservado para grafos locais de trabalho, nao versionados no repositorio;
 - `figures/`: figuras geradas para analise e relatorio;
 - `notebooks/`: exploracao complementar mantida apenas quando util ao projeto.
 
@@ -286,7 +284,7 @@ Os artefatos de `data/processed` estao organizados, na pratica, em cinco grupos:
    - `final_projection_centrality_stats.json`
    - `catalog_final_centrality_topk.csv` / `community_final_centrality_topk.csv`
 
-Arquivos como `*.sqlite`, analises de sensibilidade e tabelas exploratorias adicionais foram mantidos no repositorio como apoio de implementacao e validacao, mas nao sao os artefatos centrais para leitura dos resultados finais.
+Arquivos como `*.sqlite`, e tabelas exploratorias adicionais foram mantidos no repositorio como apoio de implementacao e validacao, mas nao sao os artefatos centrais dos resultados finais.
 
 ## Observacoes sobre os artefatos versionados
 
