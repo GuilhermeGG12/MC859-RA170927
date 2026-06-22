@@ -31,6 +31,7 @@ A execucao do projeto foi organizada em seis etapas principais.
 
 ### Limpeza e instancias bipartidas
 
+- `src/build_community_base.py`
 - `src/clean_catalog.py`
 - `src/clean_community.py`
 - `src/build_common_game_universe.py`
@@ -56,6 +57,20 @@ A execucao do projeto foi organizada em seis etapas principais.
 
 Os scripts foram escritos para serem executados a partir da raiz do repositorio.
 
+Os dados brutos nao sao versionados. Baixe o dataset
+[Game Recommendations on Steam](https://www.kaggle.com/datasets/antonkozyriev/game-recommendations-on-steam)
+e coloque pelo menos estes arquivos em `data/raw/`:
+
+- `games.csv`;
+- `games_metadata.json`;
+- `recommendations.csv`.
+
+Instale as dependencias antes de executar o pipeline:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
 ### 1. Limpeza do catalogo
 
 ```bash
@@ -71,8 +86,13 @@ Saidas principais:
 ### 2. Limpeza da comunidade
 
 ```bash
+python src/build_community_base.py --base-dir .
 python src/clean_community.py --base-dir .
 ```
+
+O primeiro script le `data/raw/recommendations.csv`, deduplica os pares
+`(user_id, app_id)` e reproduz o pre-filtro historico de 2 a 100 jogos por
+usuario. O segundo aplica os filtros oficiais da fase final sobre essa base.
 
 Filtro oficial da fase final:
 
@@ -82,6 +102,7 @@ Filtro oficial da fase final:
 
 Saidas principais:
 
+- `data/processed/user_game_edges_base.csv` (intermediario local nao versionado)
 - `data/processed/user_game_edges.csv`
 - `data/processed/community_stats.json`
 - `data/processed/community_filter_summary.json`
@@ -103,10 +124,15 @@ Todas as comparacoes entre catalogo e comunidade na fase final usam esse univers
 ### 4. Grafos bipartidos
 
 ```bash
-python src/build_bipartite_graphs.py --base-dir .
+python src/build_bipartite_graphs.py --base-dir . --force-user-game-graphml
 python src/analyze_bipartite_graphs.py --base-dir .
 python src/plot_bipartite_degree_loglog.py --base-dir .
 ```
+
+O `user_game.graphml` ocupa aproximadamente 2 GB. Se o objetivo for apenas
+reproduzir as estatisticas tabulares, omita `--force-user-game-graphml`. Para as
+etapas que validam a instancia formal em GraphML, gere o arquivo com a opcao acima
+ou baixe a versao publicada no Mendeley Data.
 
 Saidas principais:
 
@@ -154,6 +180,65 @@ Saidas principais:
 - `data/processed/catalog_final_centrality_topk.csv`
 - `data/processed/community_final_centrality_topk.csv`
 
+#### Onde consultar comunidades, centralidades e jogos-ponte
+
+As comunidades, a betweenness e o PageRank foram calculados em grafos de
+trabalho top-50 simetrizados por uniao: para cada jogo, o pipeline seleciona
+as 50 relacoes de maior peso e preserva uma aresta quando ela e selecionada
+por pelo menos uma das extremidades. A forca, por sua vez, e calculada
+diretamente nas projecoes finais completas.
+
+Os resultados podem ser consultados diretamente nos seguintes arquivos:
+
+- `data/processed/final_projection_community_comparison.json`: parametros dos grafos de
+  trabalho, modularidade, ARI e NMI;
+- `data/processed/catalog_final_communities.csv` e
+  `data/processed/community_final_communities.csv`:
+  comunidade atribuida a cada jogo;
+- `data/processed/final_projection_centrality_stats.json`: correlacoes de Spearman e
+  sobreposicao dos rankings top-25 de forca, betweenness e PageRank;
+- `data/processed/catalog_final_centrality_topk.csv` e
+  `data/processed/community_final_centrality_topk.csv`: nomes, posicoes e valores dos 25
+  jogos mais bem colocados em cada metrica.
+
+Assim, "top-50" descreve a construcao dos grafos de trabalho, enquanto
+"top-25" descreve somente a quantidade de resultados apresentados nos
+rankings finais. Na execucao oficial, a sobreposicao dos top-25 foi zero
+para forca, betweenness e PageRank.
+
+#### Onde consultar os dados das tabelas do relatorio
+
+As tabelas do relatorio podem ser conferidas a partir dos seguintes
+artefatos:
+
+- limpeza do catalogo e da comunidade:
+  `data/processed/catalog_stats.json`,
+  `data/processed/community_stats.json` e
+  `data/processed/community_filter_summary.json`;
+- dimensoes e estatisticas dos grafos bipartidos:
+  `data/processed/bipartite_stats.json` e
+  `data/processed/bipartite_analysis_stats.json`;
+- varredura usada para escolher os thresholds:
+  `data/processed/projection_threshold_sweep_table.csv`,
+  `data/processed/projection_threshold_sweep_catalog_extended.csv` e
+  `data/processed/projection_threshold_sweep_summary.json`;
+- dimensoes das projecoes apos os cortes finais:
+  `data/processed/final_filtered_projection_stats.json`;
+- sobreposicao de arestas e comparacao de pesos:
+  `data/processed/final_projection_comparison_stats.json` e
+  `data/processed/final_projection_shared_edge_weights.csv`;
+- comparacao de comunidades e centralidades: os arquivos indicados na
+  secao anterior.
+
+Os thresholds finais foram `jaccard_tags >= 0.25` para o catalogo e
+`jaccard_users >= 0.002` para a comunidade. A varredura mostra a reducao do
+numero de arestas e do grau medio em cada corte, juntamente com o numero de
+componentes, jogos isolados e tamanho da componente gigante. Nos cortes
+escolhidos, as duas projecoes preservam os 22.708 jogos em uma unica
+componente conexa, sem vertices isolados. As figuras
+`figures/projection_threshold_*.png` apresentam graficamente a mesma
+analise.
+
 ## Artefatos finais mais importantes
 
 Para leitura rapida da fase final, os arquivos mais importantes sao:
@@ -165,6 +250,8 @@ Para leitura rapida da fase final, os arquivos mais importantes sao:
 - `data/processed/final_projection_centrality_stats.json`
 - `data/processed/catalog_final_communities.csv`
 - `data/processed/community_final_communities.csv`
+- `data/processed/catalog_final_centrality_topk.csv`
+- `data/processed/community_final_centrality_topk.csv`
 
 ## Mapa rapido de `data/processed`
 

@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 
-DEFAULT_INPUT = Path("archive/community_base/data/processed/user_game_edges_base.csv")
+DEFAULT_INPUT = Path("data/processed/user_game_edges_base.csv")
 DEFAULT_EDGES_OUTPUT = Path("data/processed/user_game_edges.csv")
 DEFAULT_STATS_OUTPUT = Path("data/processed/community_stats.json")
 DEFAULT_FILTER_SUMMARY_OUTPUT = Path("data/processed/community_filter_summary.json")
@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
         "--input",
         type=Path,
         default=DEFAULT_INPUT,
-        help="Caminho relativo ao base-dir para o dataset base historico user_game_edges_base.csv.",
+        help="Caminho relativo ao base-dir para user_game_edges_base.csv.",
     )
     parser.add_argument(
         "--edges-output",
